@@ -1,0 +1,7 @@
+@(loginForm: Form[LoginForm], messageFromServer : String)(implicit message : Messages)
+
+@main("Welcome to Play") {
+
+   @login(loginForm, messageFromServer)(message)
+
+}

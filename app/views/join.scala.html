@@ -1,0 +1,29 @@
+@(loginForm: Form[JoinForm], messageFromServer : String)(implicit message: Messages)
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" media="screen" href="@routes.Assets.at("bootstrap/css/bootstrap.css")">
+  <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+  <script src="@routes.Assets.at("bootstrap/js/bootstrap.js")" type="text/javascript"></script>
+  <title>Member Join</title>
+</head>
+<body>
+  <div class="container">
+
+    <form class="form-signin" action = "@routes.JoinController.joinProcess()" method="post">
+      <h2 class="form-signin-heading">@messageFromServer</h2>
+      <label for="inputEmail" class="sr-only">Account</label>
+      <input type="text" id="inputEmail" class="form-control" placeholder="ID" name = "account" required autofocus>
+      <label for="inputPassword" class="sr-only">Password</label>
+      <input type="text" id="inputPassword" class="form-control" placeholder="password" name ="password" required>
+      <label for="input UserName" class="sr-only">UserName</label>
+      <input type="text" id="inputUserName" class="form-control" placeholder="userName" name="userName" requird>
+      <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+    </form>
+
+  </div> <!-- /container -->
+</body>
+</html>
