@@ -34,7 +34,7 @@ class AccountDataAccess @Inject()(protected val dbConfigProvider : DatabaseConfi
     db.run((accounts += accountData).asTry)
   }
 
-  def verifyPassword[A, B](account : String, password : String) = {
+  def verifyPassword(account : String, password : String) = {
     db.run {
       accounts
         .filter(record => record.account === account && record.password === password)
@@ -44,7 +44,7 @@ class AccountDataAccess @Inject()(protected val dbConfigProvider : DatabaseConfi
     }
   }
 
-  def searchUserByName[A, B](account : String)(implicit ec: ExecutionContext)  = {
+  def searchUserByName(account : String)(implicit ec: ExecutionContext)  = {
     db.run{
       accounts.filter(record => record.account === account).map(_.userName).result.asTry
     }
