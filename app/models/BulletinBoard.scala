@@ -47,7 +47,7 @@ class BulletinBoardAccess @Inject()(protected val dbConfigProvider : DatabaseCon
   val boardTitles = TableQuery[BoardTitles]
 
   def getBoardTitleList(boardType : Int) = {
-    db.run(boardTitles.filter(a => a.boardType === 0).result.asTry)
+    db.run(boardTitles.filter(a => a.boardType === 0).sortBy(_.idx.desc).result.asTry)
   }
 
   def getBoardContents(id : Long) = {
