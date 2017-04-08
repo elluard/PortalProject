@@ -9,7 +9,6 @@ import javax.inject.{Inject, Singleton}
 import slick.driver.JdbcProfile
 
 import scala.concurrent.ExecutionContext
-import scala.util.{Failure, Success}
 
 /**
   * Created by leehwangchun on 2017. 3. 25..
@@ -23,7 +22,8 @@ class Accounts(tag : Tag) extends Table[Account](tag, "Accounts") {
   def lastLoginDate = column[Date]("LastLoginDate")
   def userName = column[String]("UserName")
 
-  def * = (UID, account, password, lastLoginDate, userName) <> ((Account.apply _).tupled, Account.unapply)}
+  def * = (UID, account, password, lastLoginDate, userName) <> ((Account.apply _).tupled, Account.unapply)
+}
 
 @Singleton()
 class AccountDataAccess @Inject()(protected val dbConfigProvider : DatabaseConfigProvider)
@@ -38,7 +38,6 @@ class AccountDataAccess @Inject()(protected val dbConfigProvider : DatabaseConfi
     db.run {
       accounts
         .filter(record => record.account === account && record.password === password)
-        .map(_.userName)
         .result
         .asTry
     }
