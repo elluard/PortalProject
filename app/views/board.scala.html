@@ -4,15 +4,37 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Bulletin Board</title>
+  <link rel="stylesheet" media="screen" href="@routes.Assets.at("bootstrap/css/bootstrap.css")">
 </head>
 <body>
-  <table border="1">
-    <tr><th>번호</th><th>제목</th><th>글쓴이</th><th>날짜</th></tr>
-    @boardContents.map { contents =>
-      <tr><td>@contents.idx</td><td><a href = @routes.BoardController.boardContents(contents.idx)>@contents.title</a></td><td>@contents.writerName</td><td>@contents.writeDate</td></tr>
-    }
-    <tr><td colspan="4" align="right">글쓰기</td></tr>
+  <table class="table table-striped">
+    <thead>
+      <tr><th>번호</th><th>제목</th><th>글쓴이</th><th>날짜</th></tr>
+    </thead>
+    <tbody>
+      @boardContents.map { contents =>
+        <tr><td>@contents.idx</td><td><a href = @routes.BoardController.boardContents(contents.idx)>@contents.title</a></td><td>@contents.writerName</td><td>@contents.writeDate</td></tr>
+      }
+      <hr />
+    </tbody>
   </table>
+
+  <a class="btn btn-default pull-right">글쓰기</a>
+
+  <div class="text-center">
+    <ul class="pagination">
+      <li><a href="#">1</a></li>
+      <li><a href="#">2</a></li>
+      <li><a href="#">3</a></li>
+      <li><a href="#">4</a></li>
+      <li><a href="#">5</a></li>
+    </ul>
+  </div>
+
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <script type="text/javascript" src="@routes.Assets.at("bootstrap/js/bootstrap.js")"></script>
 </body>
 </html>

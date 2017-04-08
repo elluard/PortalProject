@@ -4,14 +4,21 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Title</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bulletin Board</title>
+  <link rel="stylesheet" media="screen" href="@routes.Assets.at("bootstrap/css/bootstrap.css")">
 </head>
 <body>
-  <table border="1">
+  <table class="table table-cell">
     <tr><td>제목</td><td>@boardContents.title</td></tr>
     <tr><td>날짜</td><td>@boardContents.writeDate</td></tr>
     <tr><td>글쓴이</td><td>@boardContents.writerName</td></tr>
     <tr><td colspan="2">@boardContents.contents</td></tr>
   </table>
+
+  <a class="btn btn-default pull-right" href="@routes.BoardController.board()">목록</a>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <script type="text/javascript" src="@routes.Assets.at("bootstrap/js/bootstrap.js")"></script>
 </body>
 </html>
