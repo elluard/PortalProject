@@ -40,7 +40,6 @@ class LoginController @Inject()(ac : AccountDataAccess)(implicit e : ExecutionCo
 
   def verifyLogin(request : Request[LoginForm]) : Future[Result] = {
     val loginData = request.body
-    //verifyPassword : (String, String) => Future[Any]
     ac.verifyPassword(loginData.account, loginData.password).map {
       case Success(a) =>  {
         if (a.nonEmpty) {

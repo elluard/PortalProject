@@ -26,8 +26,8 @@ class BoardController @Inject()(bc : BulletinBoardAccess)(implicit e : Execution
 
   def boardContents(id : Long) = Action.async { implicit request =>
     bc.getBoardContents(id).map {
-      case Success(a) => Ok(a.toString)
-      case Failure(a) => BadRequest(a.toString)
+      case Some(a) => Ok(views.html.boardContents(a))
+      case None => BadRequest("No Contents")
     }
   }
 }

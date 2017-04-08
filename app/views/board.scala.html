@@ -12,6 +12,7 @@
     @boardContents.map { contents =>
       <tr><td>@contents.idx</td><td><a href = @routes.BoardController.boardContents(contents.idx)>@contents.title</a></td><td>@contents.writerName</td><td>@contents.writeDate</td></tr>
     }
+    <tr><td colspan="4" align="right">글쓰기</td></tr>
   </table>
 </body>
 </html>

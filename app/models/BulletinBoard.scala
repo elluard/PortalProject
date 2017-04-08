@@ -51,7 +51,7 @@ class BulletinBoardAccess @Inject()(protected val dbConfigProvider : DatabaseCon
   }
 
   def getBoardContents(id : Long) = {
-    db.run(boardContents.filter(_.idx === id).result.asTry)
+    db.run(boardContents.filter(_.idx === id).result.headOption)
   }
 
   def insertBoardList(contents : BulletinBoard) = {
