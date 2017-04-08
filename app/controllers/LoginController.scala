@@ -29,7 +29,7 @@ class LoginController @Inject()(ac : AccountDataAccess)(implicit e : ExecutionCo
   )
 
   def index = Action { request =>
-    request.session.get("Account")
+    request.session.get("userName")
       .map(account => Ok(views.html.userInfo(account)).withSession(request.session))
       .getOrElse(Ok(views.html.index(loginForm,"Hello")))
   }
@@ -45,7 +45,7 @@ class LoginController @Inject()(ac : AccountDataAccess)(implicit e : ExecutionCo
       case Success(a) =>  {
         if (a.nonEmpty) {
           Redirect(routes.LoginController.index)
-            .withSession("Account" -> loginData.account)
+            .withSession("userName" -> a.head.userName)
         }
         else Ok(views.html.index(loginForm, "Invalid login information"))
       }
