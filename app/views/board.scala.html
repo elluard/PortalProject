@@ -10,7 +10,7 @@
   <table border="1">
     <tr><th>번호</th><th>제목</th><th>글쓴이</th><th>날짜</th></tr>
     @boardContents.map { contents =>
-      <tr><td>@contents.idx</td><td>@contents.title</td><td>@contents.writerName</td><td>@contents.writeDate</td></tr>
+      <tr><td>@contents.idx</td><td><a href = @routes.BoardController.boardContents(contents.idx)>@contents.title</a></td><td>@contents.writerName</td><td>@contents.writeDate</td></tr>
     }
   </table>
 </body>
