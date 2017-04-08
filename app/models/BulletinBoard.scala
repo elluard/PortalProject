@@ -13,7 +13,7 @@ import slick.driver.JdbcProfile
   * Created by leehwangchun on 2017. 4. 8..
   */
 
-case class BulletinBoard(idx : Long, boardType : Int, title : String, contents : String, hitCount : Int, writeDate : Date)
+case class BulletinBoard(idx : Long, boardType : Int, title : String, contents : String, hitCount : Int, writeDate : Date, writerName : String)
 
 class BulletinBoards(tag : Tag) extends Table[BulletinBoard](tag, "bulletinBoard"){
   def idx = column[Long]("idx", O.PrimaryKey, O.AutoInc)
@@ -22,8 +22,9 @@ class BulletinBoards(tag : Tag) extends Table[BulletinBoard](tag, "bulletinBoard
   def contents = column[String]("contents")
   def hitCount = column[Int]("hitCount")
   def writeDate = column[Date]("writeDate")
+  def writerName = column[String]("writerName")
 
-  def * = (idx, boardType, title, contents, hitCount, writeDate) <> ((BulletinBoard.apply _).tupled, BulletinBoard.unapply)
+  def * = (idx, boardType, title, contents, hitCount, writeDate, writerName) <> ((BulletinBoard.apply _).tupled, BulletinBoard.unapply)
 }
 
 @Singleton()
@@ -31,7 +32,7 @@ class BulletinBoardAccess @Inject()(protected val dbConfigProvider : DatabaseCon
   extends HasDatabaseConfigProvider[JdbcProfile]{
   val boardContents = TableQuery[BulletinBoards]
 
-  def getBoardList(boardType : Int) = {
+  def getBoardTitleList(boardType : Int) = {
     db.run(boardContents.filter(a => a.boardType === 0).result.asTry)
   }
 

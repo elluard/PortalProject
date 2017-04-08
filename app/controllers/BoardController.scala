@@ -18,7 +18,7 @@ class BoardController @Inject()(bc : BulletinBoardAccess)(implicit e : Execution
   extends Controller with I18nSupport {
 
   def board = Action.async { implicit request =>
-    bc.getBoardList(0).map {
+    bc.getBoardTitleList(0).map {
       case Success(a) => Ok(views.html.board(a))
       case Failure(a) => BadRequest(a.toString)
     }
