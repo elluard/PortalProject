@@ -23,4 +23,11 @@ class BoardController @Inject()(bc : BulletinBoardAccess)(implicit e : Execution
       case Failure(a) => BadRequest(a.toString)
     }
   }
+
+  def boardContents(id : Long) = Action.async { implicit request =>
+    bc.getBoardContents(id).map {
+      case Success(a) => Ok(a.toString)
+      case Failure(a) => BadRequest(a.toString)
+    }
+  }
 }

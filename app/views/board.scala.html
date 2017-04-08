@@ -1,12 +1,17 @@
-@(boardContents : Seq[BulletinBoard])(implicit message : Messages)
+@(boardContents : Seq[BoardTitle])(implicit message : Messages)
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Title</title>
+  <title>Bulletin Board</title>
 </head>
 <body>
-  @boardContents.toString
+  <table border="1">
+    <tr><th>번호</th><th>제목</th><th>글쓴이</th><th>날짜</th></tr>
+    @boardContents.map { contents =>
+      <tr><td>@contents.idx</td><td>@contents.title</td><td>@contents.writerName</td><td>@contents.writeDate</td></tr>
+    }
+  </table>
 </body>
 </html>
