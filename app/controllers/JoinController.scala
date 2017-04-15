@@ -45,7 +45,6 @@ class JoinController @Inject()(ac : AccountDataAccess)(implicit e : ExecutionCon
     val joinData = request.body
     val dbData = Account(0, joinData.account, joinData.password, new Date(0), joinData.userName)
 
-    // TODO : exception catch 해서 이미 만들어진 계정, 이미 있는 유저네임 처리 필요하다
     ac.insertNewUser(dbData).map {
       case Success(a) => Redirect(routes.LoginController.index)
       case Failure(a) => BadRequest(views.html.join(joinForm, "DB Error" + a.toString))
