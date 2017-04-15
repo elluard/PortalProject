@@ -9,12 +9,10 @@
   <body>
       <form class="ui form" action = "@routes.LoginController.loginProcess()" method="post">
         <h2 class="form-signin-heading">@messageFromServer</h2>
-        <div class="field" style="width: 300px">
-          <label for="inputEmail">Account</label>
+        <div class="field" style="width: 200px">
           <input type="text" id="inputEmail" placeholder="ID" name = "account" required autofocus>
         </div>
-        <div class="field" style="width: 300px">
-          <label for="inputPassword">Password</label>
+        <div class="field" style="width: 200px">
           <input type="text" id="inputPassword" placeholder="password" name ="password" required>
         </div>
         <button class="ui button" type="submit">Sign in</button>

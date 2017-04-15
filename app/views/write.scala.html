@@ -1,0 +1,23 @@
+@(userName : String)(implicit message : Messages)
+
+<!DOCTYPE html>
+<html lang="kr">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bulletin Board</title>
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("bootstrap/css/bootstrap.css")">
+  </head>
+  <body>
+    <table class="table table-cell">
+      <tr><td>제목</td><td><input type="text" name = "contentsTitle" required autofocus></td></tr>
+      <tr><td>글쓴이</td><td>@userName</td></tr>
+      <tr><td colspan="2"><textarea name = "contentsTitle" width="100%" required autofocus></textarea></td></tr>
+    </table>
+
+    <a class="btn btn-default pull-right" href="@routes.BoardController.board()">목록</a>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script type="text/javascript" src="@routes.Assets.at("bootstrap/js/bootstrap.js")"></script>
+  </body>
+</html>

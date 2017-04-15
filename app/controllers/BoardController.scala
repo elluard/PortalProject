@@ -30,4 +30,10 @@ class BoardController @Inject()(bc : BulletinBoardAccess)(implicit e : Execution
       case None => BadRequest("No Contents")
     }
   }
+
+  def write = Action { implicit request =>
+    request.session.get("userName")
+      .map(userName => Ok(views.html.write(userName)).withSession(request.session))
+      .getOrElse(Ok(views.html.write("NoName")))
+  }
 }
