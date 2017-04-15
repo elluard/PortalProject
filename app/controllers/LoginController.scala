@@ -28,14 +28,18 @@ class LoginController @Inject()(ac : AccountDataAccess)(implicit e : ExecutionCo
     )(LoginForm.apply)(LoginForm.unapply)
   )
 
-  def index = Action { request =>
+  def index = Action {
+    Ok(views.html.index())
+  }
+
+  def login = Action { request =>
     request.session.get("userName")
       .map(account => Ok(views.html.userInfo(account)).withSession(request.session))
-      .getOrElse(Ok(views.html.index(loginForm,"Hello")))
+      .getOrElse(Ok(views.html.login(loginForm,"Welcome!")))
   }
 
   def formParseError(formWithErrors : Form[LoginForm]) : Result = {
-    BadRequest(views.html.index(loginForm, "Insert All Fields"))
+    BadRequest(views.html.login(loginForm,"ID or PW is empty"))
   }
 
   def verifyLogin(request : Request[LoginForm]) : Future[Result] = {
@@ -43,10 +47,10 @@ class LoginController @Inject()(ac : AccountDataAccess)(implicit e : ExecutionCo
     ac.verifyPassword(loginData.account, loginData.password).map {
       case Success(a) =>  {
         if (a.nonEmpty) {
-          Redirect(routes.LoginController.index)
+          Redirect(routes.LoginController.login)
             .withSession("userName" -> a.head.userName)
         }
-        else Ok(views.html.index(loginForm, "Invalid login information"))
+        else Ok(views.html.login(loginForm,"Invalid ID/PW"))
       }
       case Failure(t) => Ok(t.toString + "Failure!!")
     }

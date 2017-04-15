@@ -1,7 +1,11 @@
-@(loginForm: Form[LoginForm], messageFromServer : String)(implicit message : Messages)
-
 @main("Welcome to Play") {
-
-   @login(loginForm, messageFromServer)(message)
-
+   <div style="float: top">
+      Top
+   </div>
+   <div style="float: left; margin-right: 10px">
+      <iframe frameborder="0" width="300" height="250" src ="./login">미지원 기능</iframe>
+   </div>
+   <div>
+      <iframe frameborder="0" src ="./board" width = "1000" height="800">미지원 기능</iframe>
+   </div>
 }

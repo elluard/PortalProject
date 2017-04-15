@@ -30,7 +30,7 @@ class JoinController @Inject()(ac : AccountDataAccess)(implicit e : ExecutionCon
   )
 
   def logOut = Action {
-    Redirect(routes.LoginController.index).withNewSession
+    Redirect(routes.LoginController.login).withNewSession
   }
 
   def joinformParseError(formWithErrors : Form[JoinForm]) : Result = {

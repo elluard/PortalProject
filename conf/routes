@@ -4,6 +4,7 @@
 
 # Home page
 GET     /                           controllers.LoginController.index
+GET     /login                      controllers.LoginController.login
 GET     /join                       controllers.JoinController.join
 GET     /logOut                     controllers.JoinController.logOut
 POST    /loginProcess               controllers.LoginController.loginProcess
