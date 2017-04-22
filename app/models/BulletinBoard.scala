@@ -13,7 +13,7 @@ import slick.driver.JdbcProfile
   * Created by leehwangchun on 2017. 4. 8..
   */
 
-case class BulletinBoard(idx : Long, boardType : Int, title : String, contents : String, hitCount : Int, writeDate : Date, writerName : String)
+case class BulletinBoard(idx : Long, boardType : Int, title : String, contents : String, hitCount : Int, writeDate : Date, writerName : String, writerUID : Long)
 
 class BulletinBoards(tag : Tag) extends Table[BulletinBoard](tag, "bulletinBoard"){
   def idx = column[Long]("idx", O.PrimaryKey, O.AutoInc)
@@ -23,8 +23,9 @@ class BulletinBoards(tag : Tag) extends Table[BulletinBoard](tag, "bulletinBoard
   def hitCount = column[Int]("hitCount")
   def writeDate = column[Date]("writeDate")
   def writerName = column[String]("writerName")
+  def writerUID = column[Long]("writerUID")
 
-  def * = (idx, boardType, title, contents, hitCount, writeDate, writerName) <> ((BulletinBoard.apply _).tupled, BulletinBoard.unapply)
+  def * = (idx, boardType, title, contents, hitCount, writeDate, writerName, writerUID) <> ((BulletinBoard.apply _).tupled, BulletinBoard.unapply)
 }
 
 case class BoardTitle(idx : Long, boardType : Int, title : String, hitCount : Int, writeDate : Date, writerName : String)
@@ -54,8 +55,9 @@ class BulletinBoardAccess @Inject()(protected val dbConfigProvider : DatabaseCon
     db.run(boardContents.filter(_.idx === id).result.headOption)
   }
 
-  def insertBoardList(contents : BulletinBoard) = {
-    db.run((boardContents += contents).asTry)
+  def insertBoardList(title : String, writer : String, contents : String, writerUID : Long) = {
+    val boardData = BulletinBoard(0, 0, title, contents, 0, new Date(System.currentTimeMillis()), writer, writerUID)
+    db.run((boardContents += boardData).asTry)
   }
 }
 

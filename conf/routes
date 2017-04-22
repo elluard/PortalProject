@@ -5,13 +5,17 @@
 # Home page
 GET     /                           controllers.LoginController.index
 GET     /login                      controllers.LoginController.login
+POST    /loginProcess               controllers.LoginController.loginProcess
+
 GET     /join                       controllers.JoinController.join
 GET     /logOut                     controllers.JoinController.logOut
-POST    /loginProcess               controllers.LoginController.loginProcess
 POST    /joinProcess                controllers.JoinController.joinProcess
+
+
 GET     /board                      controllers.BoardController.board
 GET     /board/:id                  controllers.BoardController.boardContents(id : Long)
 GET     /write                      controllers.BoardController.write
+POST    /commit                     controllers.BoardController.commit
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
