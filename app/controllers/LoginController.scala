@@ -48,7 +48,7 @@ class LoginController @Inject()(ac : AccountDataAccess)(implicit e : ExecutionCo
       case Success(a) =>  {
         if (a.nonEmpty) {
           Redirect(routes.LoginController.login)
-            .withSession("userName" -> a.head.userName)
+₩            .withSession("userName" -> a.head.userName, "uid" -> a.head.uid.toString)
         }
         else Ok(views.html.login(loginForm,"Invalid ID/PW"))
       }
