@@ -39,7 +39,10 @@ class BoardController @Inject()(bc : BulletinBoardAccess)(implicit e : Execution
 
   def boardContents(id: Long) = Action.async { implicit request =>
     bc.getBoardContents(id).map {
-      case Some(a) => Ok(views.html.boardContents(a))
+      case Some(a) => {
+        val canModify = request.session.get("uid").exists(_.toLong == a.writerUID)
+        Ok(views.html.boardContents(a, canModify))
+      }
       case None => BadRequest("No Contents")
     }
   }
