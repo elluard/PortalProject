@@ -15,7 +15,7 @@
     </thead>
     <tbody>
       @boardContents.map { contents =>
-        <tr><td>@contents.idx</td><td><a href = @routes.BoardController.boardContents(contents.idx)>@contents.title</a></td><td>@contents.writerName</td><td>@contents.writeDate</td></tr>
+        <tr><td>@contents.idx</td><td><a href = ./boardContents/@contents.idx.toInt>@contents.title</a></td><td>@contents.writerName</td><td>@contents.writeDate</td></tr>
       }
       <hr />
     </tbody>
@@ -25,11 +25,11 @@
 
   <div class="text-center">
     <ul class="pagination">
-      <li><a href="#">1</a></li>
-      <li><a href="#">2</a></li>
-      <li><a href="#">3</a></li>
-      <li><a href="#">4</a></li>
-      <li><a href="#">5</a></li>
+      <li><a href="/board?page=1">1</a></li>
+      <li><a href="/board?page=2">2</a></li>
+      <li><a href="/board?page=3">3</a></li>
+      <li><a href="/board?page=4">4</a></li>
+      <li><a href="/board?page=5">5</a></li>
     </ul>
   </div>
 

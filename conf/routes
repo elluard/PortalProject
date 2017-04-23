@@ -12,8 +12,8 @@ GET     /logOut                     controllers.JoinController.logOut
 POST    /joinProcess                controllers.JoinController.joinProcess
 
 
-GET     /board                      controllers.BoardController.board
-GET     /board/:id                  controllers.BoardController.boardContents(id : Long)
+GET     /board                      controllers.BoardController.board(page : Int ?= 1)
+GET     /boardContents/:id          controllers.BoardController.boardContents(id : Long)
 GET     /write                      controllers.BoardController.write
 POST    /commit                     controllers.BoardController.commit
 

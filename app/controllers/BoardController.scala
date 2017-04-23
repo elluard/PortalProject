@@ -30,8 +30,8 @@ class BoardController @Inject()(bc : BulletinBoardAccess)(implicit e : Execution
     )(WriteForm.apply)(WriteForm.unapply)
   )
 
-  def board = Action.async { implicit request =>
-    bc.getBoardTitleList(0).map {
+  def board(page : Int) = Action.async { implicit request =>
+    bc.getBoardTitleList(0, page).map {
       case Success(a) => Ok(views.html.board(a))
       case Failure(a) => BadRequest(a.toString)
     }

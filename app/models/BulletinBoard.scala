@@ -46,9 +46,18 @@ class BulletinBoardAccess @Inject()(protected val dbConfigProvider : DatabaseCon
   extends HasDatabaseConfigProvider[JdbcProfile]{
   val boardContents = TableQuery[BulletinBoards]
   val boardTitles = TableQuery[BoardTitles]
+  val contentsPerPage = 10
 
-  def getBoardTitleList(boardType : Int) = {
-    db.run(boardTitles.filter(a => a.boardType === 0).sortBy(_.idx.desc).result.asTry)
+  def getBoardTitleList(boardType : Int, page : Int) = {
+    db.run(
+      boardTitles
+        .filter(a => a.boardType === 0) //where
+        .sortBy(_.idx.desc)             //order by
+        .drop(contentsPerPage*(page-1))     //limit
+        .take(contentsPerPage)          //offset
+        .result
+        .asTry
+    )
   }
 
   def getBoardContents(id : Long) = {
