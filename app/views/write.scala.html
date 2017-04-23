@@ -9,7 +9,7 @@
     <link rel="stylesheet" media="screen" href="@routes.Assets.at("bootstrap/css/bootstrap.css")">
   </head>
   <body>
-    <form class = "ui form" method ="post" action="./commit">
+    <form class = "ui form" method ="post" action="/commit">
       <table class="table table-cell">
         <tr><td>제목</td><td><input type="text" name = "title" required autofocus></td></tr>
         <tr><td>글쓴이</td><td><input type="text" name = "writer" value=@userName readonly></td></tr>
@@ -18,7 +18,7 @@
       <button class="btn btn-default pull-left" type="submit">글쓰기</button>
     </form>
 
-    <a class="btn btn-default pull-right" href="@routes.BoardController.board()">목록</a>
+    <a class="btn btn-default pull-right" href="/board">목록</a>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script type="text/javascript" src="@routes.Assets.at("bootstrap/js/bootstrap.js")"></script>

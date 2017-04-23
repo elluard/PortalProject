@@ -15,13 +15,13 @@
     </thead>
     <tbody>
       @boardContents.map { contents =>
-        <tr><td>@contents.idx</td><td><a href = ./boardContents/@contents.idx.toInt>@contents.title</a></td><td>@contents.writerName</td><td>@contents.writeDate</td></tr>
+        <tr><td>@contents.idx</td><td><a href = /boardContents/@contents.idx.toInt>@contents.title</a></td><td>@contents.writerName</td><td>@contents.writeDate</td></tr>
       }
       <hr />
     </tbody>
   </table>
 
-  <a class="btn btn-default pull-right" href="./write">글쓰기</a>
+  <a class="btn btn-default pull-right" href="/write">글쓰기</a>
 
   <div class="text-center">
     <ul class="pagination">
