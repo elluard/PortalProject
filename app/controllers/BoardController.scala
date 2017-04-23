@@ -2,7 +2,7 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 
-import models.{AccountDataAccess, BulletinBoardAccess}
+import models.{AccountDataAccess, BulletinBoard, BulletinBoardAccess}
 import play.Configuration
 import play.api.data.Form
 import play.api.data.Forms._
@@ -16,7 +16,7 @@ import scala.util.{Failure, Success}
   * Created by leehwangchun on 2017. 4. 8..
   */
 
-case class WriteForm(title : String, writer : String, contents : String)
+case class WriteForm(idx : Long, title : String, writer : String, contents : String)
 
 @Singleton
 class BoardController @Inject()(bc : BulletinBoardAccess)(implicit e : ExecutionContext, val config: Configuration, val messagesApi: MessagesApi)
@@ -24,6 +24,7 @@ class BoardController @Inject()(bc : BulletinBoardAccess)(implicit e : Execution
 
   val writeForm = Form(
     mapping(
+      "idx" -> longNumber,
       "title" -> nonEmptyText,
       "writer" -> nonEmptyText,
       "contents" -> nonEmptyText
@@ -54,7 +55,7 @@ class BoardController @Inject()(bc : BulletinBoardAccess)(implicit e : Execution
   }
 
   def formParseError(formWithErrors: Form[WriteForm]): Result = {
-    BadRequest("form parse error")
+    BadRequest("form parse error" + formWithErrors.toString)
   }
 
   def insertToDB(request: Request[WriteForm]): Future[Result] = {
@@ -67,4 +68,19 @@ class BoardController @Inject()(bc : BulletinBoardAccess)(implicit e : Execution
   }
 
   def commit = Action.async(parse.form(writeForm, onErrors = formParseError))(insertToDB)
+
+  def modify(id : Long) = Action.async {
+    bc.getBoardContents(id).map {
+      case Some(a) => Ok(views.html.modify(a, writeForm))
+      case None => BadRequest("No Contents")
+    }
+  }
+
+  def modifyCommit = Action.async(parse.form(writeForm, onErrors = formParseError)) { implicit request =>
+    val boardData = request.body
+    bc.updateBoardContents(boardData.idx, boardData.contents).map {
+      case Success(a) => Redirect(routes.BoardController.board())
+      case Failure(t) => Ok(t.toString + "Failure!!")
+    }
+  }
 }

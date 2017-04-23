@@ -16,6 +16,8 @@ GET     /board                      controllers.BoardController.board(page : Int
 GET     /boardContents/:id          controllers.BoardController.boardContents(id : Long)
 GET     /write                      controllers.BoardController.write
 POST    /commit                     controllers.BoardController.commit
+GET     /modify/:id                 controllers.BoardController.modify(id : Long)
+POST    /modifyCommit               controllers.BoardController.modifyCommit
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

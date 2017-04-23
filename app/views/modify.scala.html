@@ -1,0 +1,27 @@
+@(boardContents: BulletinBoard, writeForm: Form[WriteForm])(implicit message : Messages)
+
+<!DOCTYPE html>
+<html lang="kr">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bulletin Board</title>
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("bootstrap/css/bootstrap.css")">
+  </head>
+  <body>
+    <form class = "ui form" method ="post" action="/modifyCommit">
+      <table class="table table-cell">
+        <tr><td>글 번호</td><td><input type="text" name = "idx" value="@boardContents.idx" hidden="true" readonly></td></tr>
+        <tr><td>제목</td><td><input type="text" name = "title" value="@boardContents.title" readonly></td></tr>
+        <tr><td>글쓴이</td><td><input type="text" name = "writer" value="@boardContents.writerName" readonly></td></tr>
+        <tr><td colspan="2"><textarea type="text" name = "contents" width="100%" autofocus required>@boardContents.contents</textarea></td></tr>
+      </table>
+      <button class="btn btn-default pull-left" type="submit">수정</button>
+    </form>
+
+    <a class="btn btn-default pull-right" href="/board">목록</a>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script type="text/javascript" src="@routes.Assets.at("bootstrap/js/bootstrap.js")"></script>
+  </body>
+</html>

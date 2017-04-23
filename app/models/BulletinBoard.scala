@@ -68,5 +68,9 @@ class BulletinBoardAccess @Inject()(protected val dbConfigProvider : DatabaseCon
     val boardData = BulletinBoard(0, 0, title, contents, 0, new Date(System.currentTimeMillis()), writer, writerUID)
     db.run((boardContents += boardData).asTry)
   }
+
+  def updateBoardContents(id : Long, contents : String) = {
+    db.run(boardContents.filter(_.idx === id).map(_.contents).update(contents).asTry)
+  }
 }
 
