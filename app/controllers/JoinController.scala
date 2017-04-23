@@ -46,7 +46,7 @@ class JoinController @Inject()(ac : AccountDataAccess)(implicit e : ExecutionCon
     val dbData = Account(0, joinData.account, joinData.password, new Date(0), joinData.userName)
 
     ac.insertNewUser(dbData).map {
-      case Success(a) => Redirect(routes.LoginController.index)
+      case Success(a) => Redirect(routes.LoginController.login)
       case Failure(a) => BadRequest(views.html.join(joinForm, "DB Error" + a.toString))
     }
 
