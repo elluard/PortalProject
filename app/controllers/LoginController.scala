@@ -46,11 +46,11 @@ class LoginController @Inject()(ac : AccountDataAccess)(implicit e : ExecutionCo
     val loginData = request.body
     ac.verifyPassword(loginData.account, loginData.password).map {
       case Success(a) =>  {
-        if (a.nonEmpty) {
-          Redirect(routes.LoginController.login)
-            .withSession("userName" -> a.head.userName, "uid" -> a.head.uid.toString)
+        a.headOption.map{ user =>
+          Redirect(routes.LoginController.login).withSession("userName" -> user.userName, "uid" -> user.uid.toString)
+        }.getOrElse{
+          Ok(views.html.login(loginForm,"Invalid ID/PW"))
         }
-        else Ok(views.html.login(loginForm,"Invalid ID/PW"))
       }
       case Failure(t) => Ok(t.toString + "Failure!!")
     }
