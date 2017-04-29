@@ -3,23 +3,22 @@
 
 <html lang="kr">
   <head>
-    <link rel="stylesheet" media="screen" href="@routes.Assets.at("Semantic-UI-CSS-master/semantic.css")">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("bootstrap/css/bootstrap.css")">
     <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+    <script src="@routes.Assets.at("bootstrap/js/bootstrap.js")" type="text/javascript"></script>
   </head>
   <body>
-    <form class="ui form" action = "/loginProcess" method="post" target="_parent">
-      <h2 class="form-signin-heading">@messageFromServer</h2>
-      <div class="field" style="width: 200px">
-        <input type="text" id="inputEmail" placeholder="ID" name = "account" required autofocus>
-      </div>
-      <div class="field" style="width: 200px">
-        <input type="text" id="inputPassword" placeholder="password" name ="password" required>
-      </div>
-      <button class="ui button" type="submit">Sign in</button>
-    </form>
-    <a href="/join" target="_parent">Join us!</a>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script type="text/javascript" src="@routes.Assets.at("Semantic-UI-CSS-master/semantic.js")"></script>
+    <div class="container">
+      <form class="form-signin" action = "/loginProcess" method="post" target="_parent">
+        <h2 class="form-signin-heading">@messageFromServer</h2>
+        <input type="text" class="form-control" id="inputEmail" placeholder="ID" name = "account" required autofocus>
+        <input type="text" class="form-control" id="inputPassword" placeholder="password" name ="password" required>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+      </form>
+      <a href="/join" target="_parent">Join us!</a>
+    </div>
   </body>
 </html>
 
