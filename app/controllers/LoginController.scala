@@ -47,7 +47,7 @@ class LoginController @Inject()(ac : AccountDataAccess)(implicit e : ExecutionCo
     ac.verifyPassword(loginData.account, loginData.password).map {
       case Success(a) =>  {
         a.headOption.map{ user =>
-          Redirect(routes.LoginController.login).withSession("userName" -> user.userName, "uid" -> user.uid.toString)
+          Redirect(routes.LoginController.index).withSession("userName" -> user.userName, "uid" -> user.uid.toString)
         }.getOrElse{
           Ok(views.html.login(loginForm,"Invalid ID/PW"))
         }

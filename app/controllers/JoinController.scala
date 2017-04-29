@@ -30,7 +30,7 @@ class JoinController @Inject()(ac : AccountDataAccess)(implicit e : ExecutionCon
   )
 
   def logOut = Action {
-    Redirect(routes.LoginController.login).withNewSession
+    Redirect(routes.LoginController.index).withNewSession
   }
 
   def joinformParseError(formWithErrors : Form[JoinForm]) : Result = {
@@ -46,31 +46,9 @@ class JoinController @Inject()(ac : AccountDataAccess)(implicit e : ExecutionCon
     val dbData = Account(0, joinData.account, joinData.password, new Date(0), joinData.userName)
 
     ac.insertNewUser(dbData).map {
-      case Success(a) => Redirect(routes.LoginController.login)
+      case Success(a) => Redirect(routes.LoginController.index)
       case Failure(a) => BadRequest(views.html.join(joinForm, "DB Error" + a.toString))
     }
-
-    //ac.searchUserByName(joinData.account).flatMap {
-    //  case Success(a) if a.nonEmpty => Future(BadRequest(views.html.join(joinForm, "Account name already exists")))
-    //  case Success(a) => ac.insertNewUser(dbData).map {
-    //    case Success(b) => Redirect(routes.LoginController.index)
-    //    case Failure(b) => BadRequest(views.html.join(joinForm, "DB Error" + b.toString))
-    //  }
-    //  case Failure(a) => Future(BadRequest(views.html.join(joinForm, "DB Error" + a.toString)))
-    //}
-
-    //for 함축. 조금만 더 생각해보자
-    //for {
-    //  a <- ac.searchUserByName(joinData.account)
-    //  b <- a match {
-    //    case Success(a) if a.nonEmpty => Future(BadRequest(views.html.join(joinForm, "Account name already exists")))
-    //    case Success(a) => ac.insertNewUser(dbData).map {
-    //          case Success(b) => Redirect(routes.LoginController.index)
-    //          case Failure(b) => BadRequest(views.html.join(joinForm, "DB Error" + b.toString))
-    //    }
-    //    case Failure(a) => Future(BadRequest(views.html.join(joinForm, "DB Error" + a.toString)))
-    //  }
-    //} yield b
   }
 
   def joinProcess = Action.async(parse.form(joinForm, onErrors = joinformParseError))(insertAccount)
