@@ -60,7 +60,7 @@ class BoardController @Inject()(bc : BulletinBoardAccess)(implicit e : Execution
 
   def insertToDB(request: Request[WriteForm]): Future[Result] = {
     val boardData = request.body
-    val writerUID = request.session.get("uid").map(_.toInt).getOrElse(-1)
+    val writerUID = request.session.get("uid").map(_.toLong).getOrElse(-1 : Long)
     bc.insertBoardList(boardData.title, boardData.writer, boardData.contents, writerUID).map {
       case Success(a) => Redirect(routes.BoardController.board())
       case Failure(t) => Ok(t.toString + "Failure!!")
@@ -69,10 +69,14 @@ class BoardController @Inject()(bc : BulletinBoardAccess)(implicit e : Execution
 
   def commit = Action.async(parse.form(writeForm, onErrors = formParseError))(insertToDB)
 
-  def modify(id : Long) = Action.async {
-    bc.getBoardContents(id).map {
-      case Some(a) => Ok(views.html.modify(a, writeForm))
-      case None => BadRequest("No Contents")
+  def modify(id : Long) = Action.async { implicit request =>
+    request.session.get("uid").map{ uid =>
+      bc.getBoardContentsForModify(id, uid.toLong).map {
+        case Some(a) => Ok(views.html.modify(a, writeForm))
+        case None => BadRequest("No Contents")
+      }
+    }.getOrElse {
+      Future(BadRequest("No Contents"))
     }
   }
 
