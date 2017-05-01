@@ -61,11 +61,22 @@ class BulletinBoardAccess @Inject()(protected val dbConfigProvider : DatabaseCon
   }
 
   def getBoardContents(id : Long) = {
-    db.run(boardContents.filter(_.idx === id).result.headOption)
+    //db.run(boardContents.filter(_.idx === id).result.headOption)
+    db.run(boardContents.filter{ board =>
+      List(
+        board.idx === id
+      ).reduceLeftOption(_ && _).getOrElse(false : Rep[Boolean])
+    }.result.headOption)
   }
 
   def getBoardContentsForModify(id : Long, writerUID : Long) = {
-    db.run(boardContents.filter(board => board.idx === id && board.writerUID === writerUID).result.headOption)
+    //db.run(boardContents.filter(board => board.idx === id && board.writerUID === writerUID).result.headOption)
+    db.run(boardContents.filter{ board =>
+      List(
+        board.idx === id,
+        board.writerUID === writerUID
+      ).reduceLeftOption(_ && _).getOrElse(false : Rep[Boolean])
+    }.result.headOption)
   }
 
   def insertBoardList(title : String, writer : String, contents : String, writerUID : Long) = {
