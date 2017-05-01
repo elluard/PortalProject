@@ -1,4 +1,4 @@
-@(boardContents : BulletinBoard, canModify : Boolean)(implicit message : Messages)
+@(boardContents : BulletinBoard, replies : Seq[BoardReply], canModify : Boolean)(implicit message : Messages)
 
 <!DOCTYPE html>
 <html lang="kr">
@@ -21,6 +21,17 @@
   }
 
   <a class="btn btn-default pull-right" href="/board">목록</a>
+
+  <table></table>
+
+  <table class="table table-cell">
+    <tr><td colspa="2">댓글목록</td><td></td></tr>
+    @replies.map { reply =>
+      <tr><td>@reply.writerName</td><td>@reply.replyContent</td></tr>
+      <tr><td></td><td></td></tr>
+    }
+  </table>
+
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
   <script type="text/javascript" src="@routes.Assets.at("bootstrap/js/bootstrap.js")"></script>
 </body>

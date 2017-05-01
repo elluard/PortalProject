@@ -2,7 +2,7 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 
-import models.{AccountDataAccess, BulletinBoard, BulletinBoardAccess}
+import models._
 import play.Configuration
 import play.api.data.Form
 import play.api.data.Forms._
@@ -19,7 +19,7 @@ import scala.util.{Failure, Success}
 case class WriteForm(idx : Long, title : String, writer : String, contents : String)
 
 @Singleton
-class BoardController @Inject()(bc : BulletinBoardAccess)(implicit e : ExecutionContext, val config: Configuration, val messagesApi: MessagesApi)
+class BoardController @Inject()(bc : BulletinBoardAccess, rc : BoardReplyAccess)(implicit e : ExecutionContext, val config: Configuration, val messagesApi: MessagesApi)
   extends Controller with I18nSupport {
 
   val writeForm = Form(
@@ -39,12 +39,19 @@ class BoardController @Inject()(bc : BulletinBoardAccess)(implicit e : Execution
   }
 
   def boardContents(id: Long) = Action.async { implicit request =>
-    bc.getBoardContents(id).map {
+    //현재는 scala 함수 안에서 같이 읽어들이도록 했지만
+    //차후에는 iframe 을 사용해서 읽어들일 수 있도록 수정 필요하다.
+    bc.getBoardContents(id).flatMap {
       case Some(a) => {
-        val canModify = request.session.get("uid").exists(_.toLong == a.writerUID)
-        Ok(views.html.boardContents(a, canModify))
+        rc.getReplies(id).map{
+          case Success(aa) => {
+            val canModify = request.session.get("uid").exists(_.toLong == a.writerUID)
+            Ok(views.html.boardContents(a, aa, canModify))
+          }
+          case Failure(ff) => BadRequest("No Contents")
+        }
       }
-      case None => BadRequest("No Contents")
+      case None => Future(BadRequest("No Contents"))
     }
   }
 
