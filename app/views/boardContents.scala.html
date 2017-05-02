@@ -25,15 +25,15 @@
   <table></table>
 
   <table class="table table-cell">
-    <tr><td colspa="2">댓글목록</td><td></td></tr>
+    <tr><td colspan="2">댓글목록</td><td></td></tr>
     @replies.map { reply =>
-      <tr><td>@reply.writerName</td><td>@reply.replyContent</td></tr>
+      <tr><td width="20%">@reply.writerName</td><td width="80%">@reply.replyContent</td></tr>
       <tr><td></td><td></td></tr>
     }
   </table>
 
   <form class = "ui form" method ="post" action="/replyCommit">
-    <input type="hidden" name = "boardContentID" value=@boardContents.idx readonly />
+    <input type="hidden" name = "boardContentID" value="@boardContents.idx"/>
     <table class="table table-cell">
       <tr><td>댓글 쓰기</td></tr>
       <tr><td><input class="form-control" type="text" name = "content" required autofocus/></td></tr>
