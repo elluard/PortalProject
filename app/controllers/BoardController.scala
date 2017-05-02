@@ -17,6 +17,7 @@ import scala.util.{Failure, Success}
   */
 
 case class WriteForm(idx : Long, title : String, writer : String, contents : String)
+case class ReplyForm(boardContentID : Long, content : String)
 
 @Singleton
 class BoardController @Inject()(bc : BulletinBoardAccess, rc : BoardReplyAccess)(implicit e : ExecutionContext, val config: Configuration, val messagesApi: MessagesApi)
@@ -29,6 +30,13 @@ class BoardController @Inject()(bc : BulletinBoardAccess, rc : BoardReplyAccess)
       "writer" -> nonEmptyText,
       "contents" -> nonEmptyText
     )(WriteForm.apply)(WriteForm.unapply)
+  )
+
+  val replyForm = Form(
+    mapping(
+      "boardContentID" -> longNumber,
+      "content" -> nonEmptyText
+    )(ReplyForm.apply)(ReplyForm.unapply)
   )
 
   def board(page : Int) = Action.async { implicit request =>
@@ -46,7 +54,7 @@ class BoardController @Inject()(bc : BulletinBoardAccess, rc : BoardReplyAccess)
         rc.getReplies(id).map{
           case Success(aa) => {
             val canModify = request.session.get("uid").exists(_.toLong == a.writerUID)
-            Ok(views.html.boardContents(a, aa, canModify))
+            Ok(views.html.boardContents(a, aa, canModify, replyForm))
           }
           case Failure(ff) => BadRequest("No Contents")
         }
@@ -62,6 +70,10 @@ class BoardController @Inject()(bc : BulletinBoardAccess, rc : BoardReplyAccess)
   }
 
   def formParseError(formWithErrors: Form[WriteForm]): Result = {
+    BadRequest("form parse error" + formWithErrors.toString)
+  }
+
+  def replyFormParseError(formWithErrors: Form[ReplyForm]): Result = {
     BadRequest("form parse error" + formWithErrors.toString)
   }
 
@@ -91,6 +103,16 @@ class BoardController @Inject()(bc : BulletinBoardAccess, rc : BoardReplyAccess)
     val boardData = request.body
     bc.updateBoardContents(boardData.idx, boardData.contents).map {
       case Success(a) => Redirect(routes.BoardController.board())
+      case Failure(t) => Ok(t.toString + "Failure!!")
+    }
+  }
+
+  def replyCommit = Action.async(parse.form(replyForm, onErrors = replyFormParseError)) { implicit request =>
+    val replyData = request.body
+    val userName = request.session.get("userName").getOrElse("NoName")
+    val writerUID = request.session.get("uid").map(_.toLong).getOrElse(-1 : Long)
+    rc.insertReply(replyData.boardContentID, writerUID, userName, replyData.content).map {
+      case Success(a) => Redirect(routes.BoardController.boardContents(replyData.boardContentID))
       case Failure(t) => Ok(t.toString + "Failure!!")
     }
   }

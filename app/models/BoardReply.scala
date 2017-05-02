@@ -30,6 +30,11 @@ class BoardReplyAccess @Inject()(protected val dbConfigProvider : DatabaseConfig
   def getReplies(boardContentID : Long) = {
     db.run(replies.filter(_.boardContentID === boardContentID).result.asTry)
   }
+
+  def insertReply(boardContentID : Long, writerUID : Long, writerName : String, replyContent : String) = {
+    val replyData = BoardReply(0, boardContentID, writerUID, writerName, replyContent)
+    db.run((replies += replyData).asTry)
+  }
 }
 
 
