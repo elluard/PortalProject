@@ -46,7 +46,7 @@ class LoginController @Inject()(ac : AccountDataAccess)(implicit e : ExecutionCo
     val loginData = request.body
     ac.verifyPassword(loginData.account, loginData.password).map {
       case Success(a) =>  {
-        a.headOption.map{ user =>
+        a.map{ user =>
           Redirect(routes.LoginController.index).withSession("userName" -> user.userName, "uid" -> user.uid.toString)
         }.getOrElse{
           Ok(views.html.login(loginForm,"Invalid ID/PW"))

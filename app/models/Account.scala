@@ -39,6 +39,7 @@ class AccountDataAccess @Inject()(protected val dbConfigProvider : DatabaseConfi
       accounts
         .filter(record => record.account === account && record.password === password)
         .result
+        .headOption
         .asTry
     }
   }
