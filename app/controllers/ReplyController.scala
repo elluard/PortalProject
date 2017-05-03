@@ -44,7 +44,7 @@ class ReplyController @Inject()(rc : BoardReplyAccess)(implicit e : ExecutionCon
     val userName = request.session.get("userName").getOrElse("NoName")
     val writerUID = request.session.get("uid").map(_.toLong).getOrElse(-1 : Long)
     rc.insertReply(replyData.boardContentID, writerUID, userName, replyData.content).map {
-      case Success(a) => Redirect(routes.BoardController.boardContents(replyData.boardContentID))
+      case Success(a) => Redirect(routes.ReplyController.replies(replyData.boardContentID))
       case Failure(t) => Ok(t.toString + "Failure!!")
     }
   }
