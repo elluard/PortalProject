@@ -1,0 +1,35 @@
+@(replies : Seq[BoardReply], replyForm: Form[ReplyForm], boardContentID : Long)(implicit message : Messages)
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" media="screen" href="@routes.Assets.at("bootstrap/css/bootstrap.css")">
+</head>
+<body>
+  <table class="table table-cell">
+    <tr><td colspan="2" align="center">댓글목록</td></tr>
+    @if(replies.isEmpty) {
+      <tr><td colspan="2">댓글이 없습니다</td></tr>
+    } else {
+      @replies.map { reply =>
+        <tr><td width="20%">@reply.writerName</td><td width="80%">@reply.replyContent</td></tr>
+        <tr><td></td><td></td></tr>
+      }
+    }
+  </table>
+
+  <form class = "ui form" method ="post" action="/replyCommit">
+    <input type="hidden" name = "boardContentID" value="@boardContentID"/>
+    <table class="table table-cell">
+      <tr><td>댓글 쓰기</td></tr>
+      <tr><td><input class="form-control" type="text" name = "content" required autofocus/></td></tr>
+      <tr><td><button class="btn btn-default pull-left" type="submit">댓글쓰기</button></td></tr>
+    </table>
+  </form>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <script type="text/javascript" src="@routes.Assets.at("bootstrap/js/bootstrap.js")"></script>
+</body>
+</html>
