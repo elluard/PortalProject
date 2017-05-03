@@ -78,7 +78,7 @@ class BoardController @Inject()(bc : BulletinBoardAccess, rc : BoardReplyAccess)
         case None => BadRequest("No Contents")
       }
     }.getOrElse {
-      Future(BadRequest("No Contents"))
+      Future(BadRequest("Invalid Connection Info"))
     }
   }
 
