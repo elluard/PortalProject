@@ -8,6 +8,9 @@ import javax.inject.{Inject, Singleton}
 
 import slick.driver.JdbcProfile
 
+import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{ Success, Failure }
+
 
 /**
   * Created by leehwangchun on 2017. 4. 8..
@@ -42,13 +45,13 @@ class BoardTitles(tag : Tag) extends Table[BoardTitle](tag, "bulletinBoard"){
 }
 
 @Singleton()
-class BulletinBoardAccess @Inject()(protected val dbConfigProvider : DatabaseConfigProvider)
+class BulletinBoardAccess @Inject()(protected val dbConfigProvider : DatabaseConfigProvider, implicit val e : ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile]{
   val boardContents = TableQuery[BulletinBoards]
   val boardTitles = TableQuery[BoardTitles]
   val contentsPerPage = 10
 
-  def getBoardTitleList(boardType : Int, page : Int) = {
+  def getBoardTitleList(boardType : Int, page : Int) : Future[Either[String, Seq[BoardTitle]]] = {
     db.run(
       boardTitles
         .filter(a => a.boardType === 0) //where
@@ -57,35 +60,40 @@ class BulletinBoardAccess @Inject()(protected val dbConfigProvider : DatabaseCon
         .take(contentsPerPage)          //offset
         .result
         .asTry
-    )
+    ).map {
+      case Success(a) => Right(a)
+      case Failure(t) => Left("Internal Server Error")
+    }
   }
 
-  def getBoardContents(id : Long) = {
-    //db.run(boardContents.filter(_.idx === id).result.headOption)
-    db.run(boardContents.filter{ board =>
-      List(
-        board.idx === id
-      ).reduceLeftOption(_ && _).getOrElse(false : Rep[Boolean])
-    }.result.headOption)
+  def getBoardContents(id : Long) : Future[Either[String, BulletinBoard]] = {
+    db.run(boardContents.filter(_.idx === id).result.headOption.asTry).map {
+      case Success(a) => a.map(board => Right(board)).getOrElse(Left("No Data"))
+      case Failure(t) => Left("Internal Server Error")
+    }
   }
 
-  def getBoardContentsForModify(id : Long, writerUID : Long) = {
-    //db.run(boardContents.filter(board => board.idx === id && board.writerUID === writerUID).result.headOption)
-    db.run(boardContents.filter{ board =>
-      List(
-        board.idx === id,
-        board.writerUID === writerUID
-      ).reduceLeftOption(_ && _).getOrElse(false : Rep[Boolean])
-    }.result.headOption)
+  def getBoardContentsForModify(id : Long, writerUID : Long) : Future[Either[String, BulletinBoard]] = {
+    db.run(boardContents.filter(board => board.idx === id && board.writerUID === writerUID).result.headOption.asTry)
+    .map {
+      case Success(a) => a.map(board => Right(board)).getOrElse(Left("NoData"))
+      case Failure(t) => Left("Internal Server Error")
+    }
   }
 
   def insertBoardList(title : String, writer : String, contents : String, writerUID : Long) = {
     val boardData = BulletinBoard(0, 0, title, contents, 0, new Date(System.currentTimeMillis()), writer, writerUID)
-    db.run((boardContents += boardData).asTry)
+    db.run((boardContents += boardData).asTry).map {
+      case Success(a) => Right(a)
+      case Failure(t) => Left(t)
+    }
   }
 
   def updateBoardContents(id : Long, contents : String) = {
-    db.run(boardContents.filter(_.idx === id).map(_.contents).update(contents).asTry)
+    db.run(boardContents.filter(_.idx === id).map(_.contents).update(contents).asTry).map {
+      case Success(a) => Right(a)
+      case Failure(t) => Left(t)
+    }
   }
 }
 

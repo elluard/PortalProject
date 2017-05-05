@@ -33,8 +33,8 @@ class BoardController @Inject()(bc : BulletinBoardAccess, rc : BoardReplyAccess)
 
   def board(page : Int) = Action.async { implicit request =>
     bc.getBoardTitleList(0, page).map {
-      case Success(a) => Ok(views.html.board(a))
-      case Failure(a) => BadRequest(a.toString)
+      case Right(a) => Ok(views.html.board(a))
+      case Left(a) => BadRequest(a.toString)
     }
   }
 
@@ -42,11 +42,11 @@ class BoardController @Inject()(bc : BulletinBoardAccess, rc : BoardReplyAccess)
     //현재는 scala 함수 안에서 같이 읽어들이도록 했지만
     //차후에는 iframe 을 사용해서 읽어들일 수 있도록 수정 필요하다.
     bc.getBoardContents(id).map {
-      case Some(a) => {
+      case Right(a) => {
         val canModify = request.session.get("uid").exists(_.toLong == a.writerUID)
         Ok(views.html.boardContents(a,canModify))
       }
-      case None => BadRequest("No Contents")
+      case Left(t) => BadRequest(t)
     }
   }
 
@@ -64,8 +64,8 @@ class BoardController @Inject()(bc : BulletinBoardAccess, rc : BoardReplyAccess)
     val boardData = request.body
     val writerUID = request.session.get("uid").map(_.toLong).getOrElse(-1 : Long)
     bc.insertBoardList(boardData.title, boardData.writer, boardData.contents, writerUID).map {
-      case Success(a) => Redirect(routes.BoardController.board())
-      case Failure(t) => Ok(t.toString + "Failure!!")
+      case Right(a) => Redirect(routes.BoardController.board())
+      case Left(t) => Ok(t.toString + "Failure!!")
     }
   }
 
@@ -74,8 +74,8 @@ class BoardController @Inject()(bc : BulletinBoardAccess, rc : BoardReplyAccess)
   def modify(id : Long) = Action.async { implicit request =>
     request.session.get("uid").map{ uid =>
       bc.getBoardContentsForModify(id, uid.toLong).map {
-        case Some(a) => Ok(views.html.modify(a, writeForm))
-        case None => BadRequest("No Contents")
+        case Right(a) => Ok(views.html.modify(a, writeForm))
+        case Left(t) => BadRequest(t)
       }
     }.getOrElse {
       Future(BadRequest("Invalid Connection Info"))
@@ -85,8 +85,8 @@ class BoardController @Inject()(bc : BulletinBoardAccess, rc : BoardReplyAccess)
   def modifyCommit = Action.async(parse.form(writeForm, onErrors = formParseError)) { implicit request =>
     val boardData = request.body
     bc.updateBoardContents(boardData.idx, boardData.contents).map {
-      case Success(a) => Redirect(routes.BoardController.board())
-      case Failure(t) => Ok(t.toString + "Failure!!")
+      case Right(a) => Redirect(routes.BoardController.board())
+      case Left(t) => Ok(t.toString + "Failure!!")
     }
   }
 }
