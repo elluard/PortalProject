@@ -21,7 +21,7 @@ case class LoginForm(account : String, password : String)
 @Singleton
 class LoginController @Inject()(ac : AccountDataAccess)(implicit e : ExecutionContext, val config: Configuration, val messagesApi: MessagesApi)
   extends Controller with I18nSupport {
-  val loginForm = Form (
+  val loginForm = Form(
     mapping(
       "account" -> nonEmptyText,
       "password" -> nonEmptyText
@@ -35,24 +35,18 @@ class LoginController @Inject()(ac : AccountDataAccess)(implicit e : ExecutionCo
   def login = Action { request =>
     request.session.get("userName")
       .map(account => Ok(views.html.userInfo(account)).withSession(request.session))
-      .getOrElse(Ok(views.html.login(loginForm,"Welcome!")))
+      .getOrElse(Ok(views.html.login(loginForm, "Welcome!")))
   }
 
-  def formParseError(formWithErrors : Form[LoginForm]) : Result = {
-    BadRequest(views.html.login(loginForm,"ID or PW is empty"))
+  def formParseError(formWithErrors: Form[LoginForm]): Result = {
+    BadRequest(views.html.login(loginForm, "ID or PW is empty"))
   }
 
-  def verifyLogin(request : Request[LoginForm]) : Future[Result] = {
+  def verifyLogin(request: Request[LoginForm]): Future[Result] = {
     val loginData = request.body
     ac.verifyPassword(loginData.account, loginData.password).map {
-      case Success(a) =>  {
-        a.map{ user =>
-          Redirect(routes.LoginController.index).withSession("userName" -> user.userName, "uid" -> user.uid.toString)
-        }.getOrElse{
-          Ok(views.html.login(loginForm,"Invalid ID/PW"))
-        }
-      }
-      case Failure(t) => Ok(t.toString + "Failure!!")
+      case Right(user) => Redirect("/").withSession("userName" -> user.userName, "uid" -> user.uid.toString)
+      case Left(errorString) => Ok(views.html.login(loginForm, errorString))
     }
   }
 
