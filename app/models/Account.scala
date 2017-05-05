@@ -8,7 +8,8 @@ import javax.inject.{Inject, Singleton}
 
 import slick.driver.JdbcProfile
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success}
 
 /**
   * Created by leehwangchun on 2017. 3. 25..
@@ -26,31 +27,28 @@ class Accounts(tag : Tag) extends Table[Account](tag, "Accounts") {
 }
 
 @Singleton()
-class AccountDataAccess @Inject()(protected val dbConfigProvider : DatabaseConfigProvider)
+class AccountDataAccess @Inject()(protected val dbConfigProvider : DatabaseConfigProvider, implicit val e : ExecutionContext)
   extends HasDatabaseConfigProvider[JdbcProfile] {
   val accounts = TableQuery[Accounts]
 
   def insertNewUser(accountData : Account) = {
-    db.run((accounts += accountData).asTry)
+    db.run((accounts += accountData).asTry).map {
+      // TODO : 닉네임 겹침 예외처리 해야함
+      case Success(a) => Right(a)
+      case Failure(t) => /*차후 로그 추가 시 t 내용 기록하도록 추가*/ Left("Internal Server Error")
+    }
   }
 
-  def verifyPassword(account : String, password : String) = {
+  def verifyPassword(account : String, password : String) : Future[Either[String, Account]] = {
     db.run {
       accounts
         .filter(record => record.account === account && record.password === password)
         .result
         .headOption
         .asTry
+    }.map {
+      case Success(recordSet) => recordSet.map(account => Right(account)).getOrElse(Left("Invalid ID/PW"))
+      case Failure(t) => /*차후 로그 추가 시 t 내용 기록하도록 추가*/ Left("Internal Server Error")
     }
-  }
-
-  def searchUserByName(account : String)(implicit ec: ExecutionContext)  = {
-    db.run{
-      accounts.filter(record => record.account === account).map(_.userName).result.asTry
-    }
-  }
-
-  def getList = {
-    db.run(accounts.filter(_.account === "elluard").map(_.userName).result.asTry)
   }
 }
