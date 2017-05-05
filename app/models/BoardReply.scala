@@ -6,6 +6,9 @@ import slick.driver.JdbcProfile
 import slick.driver.MySQLDriver.api._
 import javax.inject.{Inject, Singleton}
 
+import scala.concurrent.ExecutionContext
+import scala.util.{Failure, Success}
+
 
 /**
   * Created by leehwangchun on 2017. 5. 1..
@@ -24,16 +27,24 @@ class BoardReplies(tag : Tag) extends Table[BoardReply](tag, "boardReply"){
 }
 
 @Singleton
-class BoardReplyAccess @Inject()(protected val dbConfigProvider : DatabaseConfigProvider) extends HasDatabaseConfigProvider[JdbcProfile]{
+class BoardReplyAccess @Inject()(implicit e : ExecutionContext, protected val dbConfigProvider : DatabaseConfigProvider) extends HasDatabaseConfigProvider[JdbcProfile]{
   val replies = TableQuery[BoardReplies]
 
   def getReplies(boardContentID : Long) = {
-    db.run(replies.filter(_.boardContentID === boardContentID).result)
+    db.run(replies.filter(_.boardContentID === boardContentID).result.asTry)
+      .map {
+        case Success(a) => Right(a)
+        case Failure(t) => Left(t)
+      }
   }
 
   def insertReply(boardContentID : Long, writerUID : Long, writerName : String, replyContent : String) = {
     val replyData = BoardReply(0, boardContentID, writerUID, writerName, replyContent)
     db.run((replies += replyData).asTry)
+      .map {
+        case Success(a) => Right(a)
+        case Failure(t) => Left(t)
+      }
   }
 }
 

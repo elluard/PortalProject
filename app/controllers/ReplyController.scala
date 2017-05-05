@@ -34,8 +34,9 @@ class ReplyController @Inject()(rc : BoardReplyAccess)(implicit e : ExecutionCon
   }
 
   def replies(id : Long) = Action.async {
-    rc.getReplies(id).map { replyList =>
-      Ok(views.html.replies(replyList, replyForm, id))
+    rc.getReplies(id).map {
+      case Right(a) => Ok(views.html.replies(a, replyForm, id))
+      case Left(t) => Ok(t.toString + "Failure!!")
     }
   }
 
@@ -44,8 +45,8 @@ class ReplyController @Inject()(rc : BoardReplyAccess)(implicit e : ExecutionCon
     val userName = request.session.get("userName").getOrElse("NoName")
     val writerUID = request.session.get("uid").map(_.toLong).getOrElse(-1 : Long)
     rc.insertReply(replyData.boardContentID, writerUID, userName, replyData.content).map {
-      case Success(a) => Redirect(routes.ReplyController.replies(replyData.boardContentID))
-      case Failure(t) => Ok(t.toString + "Failure!!")
+      case Right(a) => Redirect(routes.ReplyController.replies(replyData.boardContentID))
+      case Left(t) => Ok(t.toString + "Failure!!")
     }
   }
 }
