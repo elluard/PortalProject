@@ -14,8 +14,10 @@ POST    /joinProcess                controllers.JoinController.joinProcess
 
 GET     /board                      controllers.BoardController.board(page : Int ?= 1)
 GET     /boardContents/:id          controllers.BoardController.boardContents(id : Long)
+
 GET     /write                      controllers.WriteController.write
 POST    /commit                     controllers.WriteController.commit
+
 GET     /modify/:id                 controllers.ModifyController.modify(id : Long)
 POST    /modifyCommit               controllers.ModifyController.modifyCommit
 
