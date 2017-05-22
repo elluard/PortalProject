@@ -16,20 +16,9 @@ import scala.util.{Failure, Success}
   * Created by leehwangchun on 2017. 4. 8..
   */
 
-case class WriteForm(idx : Long, title : String, writer : String, contents : String)
-
 @Singleton
 class BoardController @Inject()(bc : BulletinBoardAccess, rc : BoardReplyAccess)(implicit e : ExecutionContext, val config: Configuration, val messagesApi: MessagesApi)
   extends Controller with I18nSupport {
-
-  val writeForm = Form(
-    mapping(
-      "idx" -> longNumber,
-      "title" -> nonEmptyText,
-      "writer" -> nonEmptyText,
-      "contents" -> nonEmptyText
-    )(WriteForm.apply)(WriteForm.unapply)
-  )
 
   def board(page : Int) = Action.async { implicit request =>
     bc.getBoardTitleList(0, page).map {
@@ -47,46 +36,6 @@ class BoardController @Inject()(bc : BulletinBoardAccess, rc : BoardReplyAccess)
         Ok(views.html.boardContents(a,canModify))
       }
       case Left(t) => BadRequest(t)
-    }
-  }
-
-  def write = Action { implicit request =>
-    request.session.get("userName")
-      .map(userName => Ok(views.html.write(userName, writeForm)).withSession(request.session))
-      .getOrElse(Ok(views.html.write("NoName", writeForm)))
-  }
-
-  def formParseError(formWithErrors: Form[WriteForm]): Result = {
-    BadRequest("form parse error" + formWithErrors.toString)
-  }
-
-  def insertToDB(request: Request[WriteForm]): Future[Result] = {
-    val boardData = request.body
-    val writerUID = request.session.get("uid").map(_.toLong).getOrElse(-1 : Long)
-    bc.insertBoardList(boardData.title, boardData.writer, boardData.contents, writerUID).map {
-      case Right(a) => Redirect(routes.BoardController.board())
-      case Left(t) => Ok(t.toString + "Failure!!")
-    }
-  }
-
-  def commit = Action.async(parse.form(writeForm, onErrors = formParseError))(insertToDB)
-
-  def modify(id : Long) = Action.async { implicit request =>
-    request.session.get("uid").map{ uid =>
-      bc.getBoardContentsForModify(id, uid.toLong).map {
-        case Right(a) => Ok(views.html.modify(a, writeForm))
-        case Left(t) => BadRequest(t)
-      }
-    }.getOrElse {
-      Future(BadRequest("Invalid Connection Info"))
-    }
-  }
-
-  def modifyCommit = Action.async(parse.form(writeForm, onErrors = formParseError)) { implicit request =>
-    val boardData = request.body
-    bc.updateBoardContents(boardData.idx, boardData.contents).map {
-      case Right(a) => Redirect(routes.BoardController.board())
-      case Left(t) => Ok(t.toString + "Failure!!")
     }
   }
 }
