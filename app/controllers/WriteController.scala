@@ -4,11 +4,8 @@ import javax.inject.Inject
 
 import models.{BoardReplyAccess, BulletinBoardAccess}
 import play.Configuration
-import play.api.data.Form
-import play.api.data.Forms._
-import play.api.data.Forms.mapping
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, Controller, Request, Result}
+import play.api.mvc.{Action, Request, Result}
 
 import scala.concurrent.{ExecutionContext, Future}
 
