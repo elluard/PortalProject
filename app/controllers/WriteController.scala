@@ -13,8 +13,6 @@ import scala.concurrent.{ExecutionContext, Future}
   * Created by leehwangchun on 2017. 5. 22..
   */
 
-//case class WriteForm(idx : Long, title : String, writer : String, contents : String)
-
 class WriteController @Inject()(bc : BulletinBoardAccess, rc : BoardReplyAccess)(implicit e : ExecutionContext, val config: Configuration, val messagesApi: MessagesApi)
   extends WriteModifyCommon with I18nSupport {
 
